@@ -942,6 +942,70 @@ body {
 }
 .reviews-cta { text-align: center; margin-top: 40px; }
 
+/* ==================== GALERÍA ==================== */
+.gallery { padding: 40px 0 100px; }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.gallery-item {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--card-border);
+  cursor: pointer;
+}
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+.gallery-item:hover img { transform: scale(1.06); }
+.gallery-item .gallery-caption {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 14px 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.gallery-item:hover .gallery-caption { opacity: 1; }
+
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,0.9);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.lightbox.open { display: flex; }
+.lightbox img {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 8px;
+}
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
 /* ==================== MOBILE ==================== */
 @media (max-width: 768px) {
   .nav-links {
@@ -1027,6 +1091,7 @@ body {
     <ul class="nav-links">
       <li><a href="#servicios">Servicios</a></li>
       <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#trabajos">Trabajos</a></li>
       <li><a href="#resenas">Reseñas</a></li>
       <li><a href="#zona">Zona</a></li>
       <li><a href="#contacto">Contacto</a></li>
@@ -1211,6 +1276,44 @@ body {
   </div>
 </section>
 
+<!-- ============ GALERÍA ============ -->
+<section class="gallery" id="trabajos">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// Nuestros trabajos</div>
+      <h2 class="section-title">Trabajos reales<br>en Ourense</h2>
+      <p class="section-desc">Instalaciones, cuadros eléctricos y reformas ejecutadas por Pulso Eléctrico.</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="images/galeria/cargador-ve-1.jpg" alt="Instalación de punto de recarga para coche eléctrico en garaje" loading="lazy">
+        <div class="gallery-caption">Punto de recarga vehículo eléctrico</div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="images/galeria/cargador-ve-2.jpg" alt="Cargador wallbox para coche eléctrico instalado en plaza de garaje" loading="lazy">
+        <div class="gallery-caption">Cargador wallbox en garaje</div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="images/galeria/cuadro-electrico-1.jpg" alt="Cuadro eléctrico industrial con protecciones y automáticos" loading="lazy">
+        <div class="gallery-caption">Cuadro eléctrico industrial</div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="images/galeria/rack-datos-1.jpg" alt="Armario de comunicaciones y datos con cableado ordenado" loading="lazy">
+        <div class="gallery-caption">Instalación de datos y comunicaciones</div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="images/galeria/reforma-1.jpg" alt="Reforma eléctrica en vivienda con tabiques de pladur y cableado nuevo" loading="lazy">
+        <div class="gallery-caption">Reforma eléctrica integral</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" aria-label="Cerrar" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
 <!-- ============ RESEÑAS ============ -->
 <section class="reviews" id="resenas">
   <div class="container">
@@ -1259,15 +1362,15 @@ body {
   <div class="container">
     <div class="reveal">
       <div class="section-label">// Zona de trabajo</div>
-      <h2 class="section-title">Ourense ciudad<br>y alrededores</h2>
-      <p class="section-desc" style="margin: 16px auto 0;">Cubrimos toda la ciudad de Ourense y localidades cercanas. Consúltanos tu ubicación sin compromiso.</p>
+      <h2 class="section-title">Ourense capital<br>y toda la provincia</h2>
+      <p class="section-desc" style="margin: 16px auto 0;">Trabajamos en toda la provincia de Ourense: capital y localidades. Consúltanos tu ubicación sin compromiso.</p>
     </div>
     <div class="zone-visual reveal">
       <div class="zone-circle">
         <div class="zone-pin">📍</div>
       </div>
-      <div class="zone-label">Ourense, Galicia</div>
-      <div class="zone-sub">Desplazamiento incluido en zona urbana</div>
+      <div class="zone-label">Provincia de Ourense, Galicia</div>
+      <div class="zone-sub">Desplazamiento incluido en Ourense capital</div>
     </div>
   </div>
 </section>
@@ -1384,6 +1487,18 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 reveals.forEach(el => observer.observe(el));
+
+// Galería: lightbox al hacer clic en una foto
+function openLightbox(el) {
+  const img = el.querySelector('img');
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox-img').alt = img.alt;
+  lb.classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
 
 // Cerrar el menú móvil al pulsar un enlace
 const navLinks = document.querySelector('.nav-links');
