@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pagina-web-pulso-electrico.es/sitemap.xml
