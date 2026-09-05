@@ -524,6 +524,23 @@ body {
 .why-us {
   padding: 100px 0 120px;
   position: relative;
+  isolation: isolate;
+}
+
+.why-us::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(180deg, var(--black) 0%, rgba(10,10,10,0.65) 35%, rgba(10,10,10,0.65) 65%, var(--black) 100%), url('images/decor/luces-colgantes.jpg');
+  background-size: cover;
+  background-position: center 30%;
+  opacity: 0.8;
+}
+
+:root[data-theme="light"] .why-us::before {
+  background-image: linear-gradient(180deg, var(--black) 0%, rgba(244,244,241,0.75) 35%, rgba(244,244,241,0.75) 65%, var(--black) 100%), url('images/decor/luces-colgantes.jpg');
+  opacity: 0.5;
 }
 
 .why-grid {
@@ -1286,10 +1303,6 @@ body {
     </div>
     <div class="gallery-grid">
       <div class="gallery-item reveal" onclick="openLightbox(this)">
-        <img src="images/galeria/cargador-ve-1.jpg" alt="Instalación de punto de recarga para coche eléctrico en garaje" loading="lazy">
-        <div class="gallery-caption">Punto de recarga vehículo eléctrico</div>
-      </div>
-      <div class="gallery-item reveal" onclick="openLightbox(this)">
         <img src="images/galeria/cargador-ve-2.jpg" alt="Cargador wallbox para coche eléctrico instalado en plaza de garaje" loading="lazy">
         <div class="gallery-caption">Cargador wallbox en garaje</div>
       </div>
@@ -1440,11 +1453,13 @@ body {
 
 <!-- ============ SCRIPTS ============ -->
 <script>
-// Modo día/noche: automático por hora (día 8:00–20:00 = claro; resto = oscuro)
-// con botón para cambiarlo a mano. Recuerda la elección si el navegador lo permite.
+// Modo día/noche: automático por hora (día 8:00–20:00 = claro; resto = oscuro).
+// Se actualiza solo en tiempo real al llegar la hora, sin recargar la página.
+// El botón permite forzar un modo solo durante esta visita; al volver a entrar
+// (o si no se toca el botón) siempre manda el automático.
 (function () {
   const root = document.documentElement;
-  const KEY = 'pulso-theme';
+  const KEY = 'pulso-theme-override';
   function autoTheme() {
     const h = new Date().getHours();
     return (h >= 8 && h < 20) ? 'light' : 'dark';
@@ -1464,15 +1479,25 @@ body {
     else root.removeAttribute('data-theme');
     setIcons(theme);
   }
-  let saved = null;
-  try { saved = localStorage.getItem(KEY); } catch (e) {}
-  let theme = saved || autoTheme();
-  apply(theme);
+  function getOverride() {
+    try { return sessionStorage.getItem(KEY); } catch (e) { return null; }
+  }
+  function tick() {
+    const override = getOverride();
+    apply(override || autoTheme());
+  }
+  tick();
+  // Revisa cada minuto si ha cambiado la franja horaria (día/noche) y actualiza sola
+  setInterval(function () {
+    if (!getOverride()) apply(autoTheme());
+  }, 60000);
+
   const btn = document.getElementById('themeToggle');
   if (btn) btn.addEventListener('click', function () {
-    theme = (root.getAttribute('data-theme') === 'light') ? 'dark' : 'light';
-    apply(theme);
-    try { localStorage.setItem(KEY, theme); } catch (e) {}
+    const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    const next = current === 'light' ? 'dark' : 'light';
+    apply(next);
+    try { sessionStorage.setItem(KEY, next); } catch (e) {}
   });
 })();
 
